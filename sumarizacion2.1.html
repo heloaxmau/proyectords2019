@@ -1,0 +1,252 @@
+<html lang="es">
+<head>
+    <!-- Referencia para el CSS -->
+    <link rel="stylesheet" href="sumarizacion2.1.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sumarización</title>
+</head>
+<body>
+    <!-- Aqui empieza el html de sumarización -->
+    <!-- <form id = "formSuma">
+        Num. direcciones IP:
+        <input type="text" id = "numDirSum">
+    </form> -->
+    <h1 id= "headSumarizacion">Sumarización</h1>
+	<div id="divRegresar">
+		<button id="indexButton" onclick="window.location.href='index.html';">Regresar</button>
+	</div>
+    <div id="divButtons">
+        <button id = "butSum" onclick="crearInputs()">Agregar IP</button>
+        <button id = "butQuit" onclick="quitarElemento()">Quitar IP</button>
+        <button id = "butComenzar" onclick ="sumarizacion()">Comenzar</button>
+        <button id = "butReiniciar" onclick="reiniciar()">Reiniciar</button>
+    </div>
+    <!-- <br>
+    <br> -->
+    <p id="instrucciones">
+        Agregar IP: Agrega un campo para ingresar una dirección IP. <br>
+        Quitar IP: Elimina un campo de dirección IP. <br>
+        Comenzar: Comienza la sumarización. <br>
+        Reiniciar: Permite ingresar nuevos valores. <br>
+    </p>
+    <div id ="direcciones" name="direccionesIP">
+        <!-- <input type="submit" value="Sumarización"> -->
+
+    </div>
+    <!-- <br>
+    <br> -->
+    <!-- COMIENZA PRUEBA -->
+    <div id="divResulSum"> 
+            <p id="resulSum"></p>
+    </div>
+    <!-- TERMINA PRUEBA -->
+    <!-- <p id="resulSum"></p> -->
+    <script>
+        var numero = 0;
+        function crearInputs() {
+            numero++;
+            input = document.createElement("input");
+            input.id = "label"+numero;
+            //input.name = "name"+numero;
+            input.placeholder = "IP "+numero;
+            //input.pattern = "[12]?[1-9]?[1-9].[12]?[1-9]?[1-9].[12]?[1-9]?[1-9].[12]?[1-9]?[1-9]";
+            //input.title = "Formato: xxx.xxx.xxx.xxx";
+            input.required = "true";
+            // input2 = document.createElement("input");
+            // input2.type ="submit";
+            document.getElementById("direcciones").appendChild(input);
+            // document.getElementById("direcciones").appendChild(input2);
+        }
+        function quitarElemento() {
+            document.getElementById("direcciones").lastChild.remove();
+            numero --;
+        }
+        function sumarizacion(){
+            /////////////////VALIDACION DE DIRECCIONES (INCOMPLETA)/////////////////////////
+            var pattern = RegExp("[12]?[0-9]?[0-9]\\.[12]?[0-9]?[0-9]\\.[12]?[0-9]?[0-9]\\.[12]?[0-9]?[0-9]");
+            for (var i = 1; i <= numero ; i++){
+                if (!pattern.test(document.getElementById("label"+i).value)){
+                    //var texto = document.createTextNode("Dirección Inválida: Ip "+i);
+
+
+                    // document.getElementById("resulSum").innerText="Dirección Inválida: Ip "+i;//appendChild(texto);
+                    // document.getElementById("label"+i).focus()
+                    alert("Dirección Inválida: IP "+i+"\n"+"Formato: xxx.xxx.xxx.xxx");
+                    document.getElementById("label"+i).focus();
+
+
+                    return;
+                }
+            }
+            //Deshabilitar botones
+            document.getElementById("butSum").disabled = "true";
+            document.getElementById("butQuit").disabled = "true";
+            document.getElementById("butComenzar").disabled ="true";
+            ////////////////////////////////////
+            //PRUEBA
+            var arrayBin = [];
+            for(i=1; i <=numero ; i++){
+                var string = document.getElementById("label"+i).value;
+                var strArray = string.split(".");
+                var texto;
+                var header = document.createElement("h2");
+                var subtitulo = document.createTextNode("Dirección IP "+i+": ");
+                header.appendChild(subtitulo);
+                document.getElementById("resulSum").appendChild(header);
+                var binario="";
+                var binario2 = "";
+                strArray.forEach(element => {
+                    elemento = Number(element);
+                    ///////////COMIENZA PRUEBA///////////
+                    binario2 = elemento.toString(2);
+                    while( binario2.length < 8){
+                        binario2 = "0"+binario2;
+                    }
+                    ////////////////////////////////////
+                    //binario += elemento.toString(2)+".";
+                    binario += binario2+".";
+                    texto = document.createTextNode(element+".");
+                    // var br = document.createElement("br");
+                    // document.getElementById("resulSum").appendChild(br);
+                    document.getElementById("resulSum").appendChild(texto);
+                });
+                // tab = document.createElement("pre");
+                // var tabText = document.createTextNode("     ");
+                // tab.appendChild(tabText);
+                // //tab.class = "tab";
+                // document.getElementById("resulSum").appendChild(tab);
+
+                texto = document.createTextNode("----------------"+binario);
+                document.getElementById("resulSum").appendChild(texto);
+                arrayBin.push(binario);
+
+            }
+            ///////////////////////////////COMENTAR//////////////////////
+            var numRepetidos = "";
+            var igual = true;
+            for(i = 0; i<36 ; i++){
+                for (var j = 1 ; j<numero; j++ ){
+                    if(arrayBin[0][i] == arrayBin[j][i]){
+                        //igual = true; DO NOTHING
+                    }else{
+                        igual = false;
+                        //break;
+                    }
+                }
+                if(igual == true ){
+                    numRepetidos += arrayBin[0][i];
+                }else{
+                    break;
+                }
+            }
+            // //AGREGANDO BR PARA SALTO DE LINEA
+            // var salto = document.createElement("br");
+            // document.getElementById("resulSum").appendChild(salto);
+            // //////////////////////////////////////////////////
+
+
+            //////////HEADER RESULTADO/////////////////////////////
+            var header = document.createElement("h2");
+            var subtitulo = document.createTextNode("Resultado: ");
+            header.appendChild(subtitulo);
+            header.style.color = "blue";
+            document.getElementById("resulSum").appendChild(header);
+            ///////////////////////////////////////////////////////
+
+
+            ////////////////////////////RESULTADO///////////////////////////////////////////////////
+
+            ///////////////ARREGLAR SEGMENTO DE RED//////////////////////////////
+            var tamProvisional = numRepetidos.length;
+            while(numRepetidos.length < 36){
+                if (numRepetidos.length == 8 || numRepetidos.length == 17 || numRepetidos.length == 26 || numRepetidos.length == 35 ){
+                    numRepetidos = numRepetidos+".";
+                }else{
+                    numRepetidos = numRepetidos+"0";
+                }
+            }
+            ////////////////////////////////////////////////////////////////////
+
+
+            var mensajeResult = document.createTextNode("El segmento de red es: ");
+            document.getElementById("resulSum").appendChild(mensajeResult);
+
+            var parteSegmento = numRepetidos.substring(0,tamProvisional); //subSegmento que coincide en todas las IPs
+            var subSegmentoTN = document.createTextNode(parteSegmento);
+            var spanSubSegmento = document.createElement("span");
+            spanSubSegmento.appendChild(subSegmentoTN);
+            spanSubSegmento.style.color = "green";
+            document.getElementById("resulSum").appendChild(spanSubSegmento);
+
+
+            var restoDelSegmento = numRepetidos.substring(tamProvisional,numRepetidos.length); //Resto del segmento
+            var restoSegmentoTN = document.createTextNode(restoDelSegmento);
+            document.getElementById("resulSum").appendChild(restoSegmentoTN);
+
+            ////////////Convertir segmento de binario a decimal/////////////
+            var binarioSinUltimoPunto = numRepetidos.substring(0,numRepetidos.length-1); 
+            var binarioDiv = binarioSinUltimoPunto.split(".");
+            var arrayDecimales = [];
+            for (var i =0; i < binarioDiv.length; i++){
+                arrayDecimales.push(parseInt((binarioDiv[i] + '').replace(/[^01]/gi, ''), 2));
+            }
+            var strDecimales = arrayDecimales.join(".");
+            var spanSegmentoDec = document.createElement("span");
+            var strDecimalesTN = document.createTextNode("("+strDecimales+")");
+            spanSegmentoDec.appendChild(strDecimalesTN);
+            spanSegmentoDec.style.color = "blue";
+            document.getElementById("resulSum").appendChild(spanSegmentoDec);
+            ///////////////////////////////////////////////////////////////////
+
+
+
+            var parteSinPuntos ="";
+            for (i = 0; i < tamProvisional;i++){
+                if (parteSegmento[i] != "."){
+                    parteSinPuntos += parteSegmento[i];
+                }
+            }
+            var tamMascara = parteSinPuntos.length;
+            var parteSinTN = document.createTextNode("   Con máscara modificada: /"+tamMascara);
+            var spanMascara = document.createElement("span");
+            spanMascara.appendChild(parteSinTN);
+            spanMascara.style.color = "red";
+            document.getElementById("resulSum").appendChild(spanMascara);
+
+            
+
+            var saltoLinea = document.createElement("br");
+            document.getElementById("resulSum").appendChild(saltoLinea);
+            //var saltoLinea = document.createElement("br");
+            // document.getElementById("resulSum").appendChild(saltoLinea);
+            // document.getElementById("resulSum").appendChild(saltoLinea);
+            //////////////////////////////////////////////////////////////////////////////////////////
+
+            //var resultTexto = document.createTextNode("El segmento de red es:  "+numRepetidos);
+            //document.getElementById("resulSum").appendChild(resultTexto);
+            //////////////////////////////////////////////////////////////////////////////////////////
+
+
+            
+            // for(i = 0; i<numero; i++){
+            //     for(var j = 0; j < 32; j++ ){
+            //         if()
+            //     }
+            // }
+
+
+            ////////////////
+            // if (!pattern.test(document.getElementById("label1").value)){
+            //     var texto = document.createTextNode("Texto Valido");
+            //     document.getElementById("resulSum").appendChild(texto);
+            // }
+            
+        }
+        function reiniciar(){
+            location = location;
+        }
+    </script>
+</body>
+</html>
